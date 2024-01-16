@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
-import 'package:typing_animation/typing_animation.dart';
 import '../controller/detail_controller.dart';
+import '../controller/favorite_controller.dart';
 import '../service/api_services.dart';
 import '../shared/utils.dart';
+import 'loading_screen.dart';
 import 'no_connection.dart';
 
 class DetailScreen extends StatelessWidget {
@@ -13,6 +13,7 @@ class DetailScreen extends StatelessWidget {
 
   final String restaurantId;
   final DetailController detailController = Get.put(DetailController());
+  final FavoriteController favoriteController = Get.put(FavoriteController());
 
   @override
   Widget build(BuildContext context) {
@@ -32,25 +33,7 @@ class DetailScreen extends StatelessWidget {
             () => !ctx.isConnectInternet.value
                 ? const NoConnection()
                 : ctx.restaurantDetail == null
-                    ? Scaffold(
-                        body: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const SizedBox(
-                                  height: 10, width: double.infinity),
-                              Lottie.asset('assets/image/sandwich.json',
-                                  width: 250, height: 250),
-                              TypingAnimation(
-                                text: 'Loading....',
-                                textStyle: GoogleFonts.roboto(
-                                  fontSize: 24.0,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
+                    ? const LoadingScreen()
                     : RefreshIndicator(
                         onRefresh: () async {
                           detailController.getDetailRestaurant(restaurantId);
@@ -70,19 +53,59 @@ class DetailScreen extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: 200.0,
-                                  decoration: BoxDecoration(
-                                    color: grey,
-                                    borderRadius: BorderRadius.circular(10),
-                                    image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: NetworkImage(
-                                        '${ApiService().imageUrl}/${ctx.restaurantDetail!.restaurant.pictureId}',
+                                Stack(
+                                  children: [
+                                    Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      height: 200.0,
+                                      decoration: BoxDecoration(
+                                        color: grey,
+                                        borderRadius: BorderRadius.circular(10),
+                                        image: DecorationImage(
+                                          fit: BoxFit.cover,
+                                          image: NetworkImage(
+                                            '${ApiService().imageUrl}/${ctx.restaurantDetail!.restaurant.pictureId}',
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
+                                    Align(
+                                      alignment: Alignment.topRight,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: grey,
+                                        ),
+                                        child: IconButton(
+                                          onPressed: () async {
+                                            await favoriteController
+                                                .toggleFavorite(ctx
+                                                    .restaurantDetail!
+                                                    .restaurant
+                                                    .id);
+                                            favoriteController
+                                                .showFavoriteSnackbar(
+                                              () => context,
+                                              favoriteController.isFavorite(ctx
+                                                  .restaurantDetail!
+                                                  .restaurant
+                                                  .id),
+                                            );
+                                          },
+                                          icon: Obx(
+                                            () => Icon(
+                                              favoriteController
+                                                      .isFavorite(restaurantId)
+                                                  ? Icons.favorite
+                                                  : Icons.favorite_border,
+                                              color: Colors.red,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(height: 16.0),
                                 Container(

@@ -1,8 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:makan_bang/controller/restaurant_controller.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../controller/favorite_controller.dart';
 import '../models/restaurant_list.dart';
 import '../service/api_services.dart';
 import '../shared/utils.dart';
@@ -10,18 +12,14 @@ import '../widget/icon_text.dart';
 import '../widget/rating.dart';
 import 'detail_screen.dart';
 
-class Top5Resto extends StatefulWidget {
-  const Top5Resto({super.key, required this.top5Restaurants});
-
+class Top5Resto extends StatelessWidget {
+  final CarouselController carouselController = CarouselController();
+  final FavoriteController favoriteController = Get.put(FavoriteController());
+  final RestaurantController restaurantController =
+      Get.put(RestaurantController());
   final List<RestaurantListItem> top5Restaurants;
 
-  @override
-  State<Top5Resto> createState() => _Top5RestoState();
-}
-
-class _Top5RestoState extends State<Top5Resto> {
-  int currentIndex = 0;
-  final CarouselController carouselController = CarouselController();
+  Top5Resto({super.key, required this.top5Restaurants});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +28,7 @@ class _Top5RestoState extends State<Top5Resto> {
       child: Column(
         children: [
           CarouselSlider.builder(
-            itemCount: widget.top5Restaurants.length,
+            itemCount: top5Restaurants.length,
             options: CarouselOptions(
               scrollDirection: Axis.horizontal,
               height: 320,
@@ -41,14 +39,12 @@ class _Top5RestoState extends State<Top5Resto> {
               autoPlay: true,
               autoPlayCurve: Curves.fastOutSlowIn,
               onPageChanged: (index, reason) {
-                setState(() {
-                  currentIndex = index;
-                });
+                restaurantController.currentIndex.value = index;
               },
             ),
             carouselController: carouselController,
             itemBuilder: (BuildContext context, int index, int realIndex) {
-              RestaurantListItem restaurants = widget.top5Restaurants[index];
+              RestaurantListItem restaurants = top5Restaurants[index];
 
               return GestureDetector(
                 onTap: () {
@@ -113,7 +109,7 @@ class _Top5RestoState extends State<Top5Resto> {
                                       restaurant: restaurants,
                                       icon: Icons.chat,
                                       text1:
-                                          '${widget.top5Restaurants[index].reviews}',
+                                          '${top5Restaurants[index].reviews}',
                                       colorIcon: blue,
                                     ),
                                   ],
@@ -138,7 +134,7 @@ class _Top5RestoState extends State<Top5Resto> {
                                         restaurant: restaurants,
                                         icon: Icons.fastfood,
                                         text1:
-                                            '${widget.top5Restaurants[index].foods}',
+                                            '${top5Restaurants[index].foods}',
                                         colorIcon: red,
                                         text2: 'Foods',
                                       ),
@@ -148,7 +144,7 @@ class _Top5RestoState extends State<Top5Resto> {
                                         restaurant: restaurants,
                                         icon: Icons.local_drink,
                                         text1:
-                                            '${widget.top5Restaurants[index].drinks}',
+                                            '${top5Restaurants[index].drinks}',
                                         colorIcon: red,
                                         text2: 'Drinks',
                                       ),
@@ -160,6 +156,33 @@ class _Top5RestoState extends State<Top5Resto> {
                           ),
                         ),
                       ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 20, top: 20),
+                          child: Card(
+                            child: Obx(
+                              () => IconButton(
+                                onPressed: () async {
+                                  await favoriteController
+                                      .toggleFavorite(restaurants.id);
+                                  favoriteController.showFavoriteSnackbar(
+                                    () => context,
+                                    favoriteController
+                                        .isFavorite(restaurants.id),
+                                  );
+                                },
+                                icon: Icon(
+                                  favoriteController.isFavorite(restaurants.id)
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -167,10 +190,10 @@ class _Top5RestoState extends State<Top5Resto> {
             },
           ),
           AnimatedSmoothIndicator(
-            activeIndex: currentIndex,
-            count: widget.top5Restaurants.length,
-            effect: const ExpandingDotsEffect(
-              activeDotColor: Colors.blue,
+            activeIndex: restaurantController.currentIndex.value,
+            count: top5Restaurants.length,
+            effect: ExpandingDotsEffect(
+              activeDotColor: purple,
               dotColor: Colors.grey,
               dotHeight: 15,
               dotWidth: 15,

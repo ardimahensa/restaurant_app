@@ -9,3 +9,4 @@ Color red = const Color.fromRGBO(250, 1, 0, 1);
 Color yellow = const Color.fromRGBO(255, 217, 102, 1);
 Color green = const Color.fromRGBO(143, 206, 0, 9);
 Color blue = const Color.fromARGB(247, 24, 124, 218);
+Color purple = const Color.fromARGB(255, 234, 217, 251);

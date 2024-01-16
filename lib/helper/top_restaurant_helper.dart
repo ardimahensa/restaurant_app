@@ -1,4 +1,4 @@
-import 'package:makan_bang/models/restaurant_list.dart';
+import '../models/restaurant_list.dart';
 
 class Top5RestaurantHelper {
   static List<RestaurantListItem> getTop5Restaurants(

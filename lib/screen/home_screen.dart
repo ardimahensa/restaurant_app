@@ -1,13 +1,13 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
-import 'package:typing_animation/typing_animation.dart';
 
 import '../controller/restaurant_controller.dart';
+import '../shared/utils.dart';
+import 'favorite.screen.dart';
 import 'list_restaurant.dart';
+import 'loading_screen.dart';
 import 'no_connection.dart';
 import 'search_screen.dart';
 import 'top_restaurant.dart';
@@ -26,10 +26,10 @@ class HomeScreen extends StatelessWidget {
         restaurantController.getRestoList();
         restaurantController.listenConnectivity();
       },
-      builder: (ctx) {
+      builder: (restaurantController) {
         return Obx(
           () {
-            if (!ctx.isConnectInternet.value) {
+            if (!restaurantController.isConnectInternet.value) {
               return const NoConnection();
             }
             return RefreshIndicator(
@@ -51,56 +51,57 @@ class HomeScreen extends StatelessWidget {
                     IconButton(
                       icon: const Icon(Icons.search),
                       onPressed: () {
-                        Get.to(() => SearchScreen());
+                        Get.to(
+                          () => SearchScreen(),
+                        );
                       },
                     ),
                   ],
                 ),
-                body: !ctx.isLoading
+                body: !restaurantController.isLoading
                     ? ListView(
                         children: [
-                          Top5Resto(top5Restaurants: ctx.top5RatingResto),
+                          Top5Resto(
+                              top5Restaurants:
+                                  restaurantController.top5RatingResto),
                           const SizedBox(height: 20),
                           Padding(
                             padding: const EdgeInsets.only(left: 8),
-                            child: Text(
-                              'Restaurant List',
-                              style: GoogleFonts.roboto(fontSize: 24),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Restaurant List',
+                                  style: GoogleFonts.roboto(fontSize: 24),
+                                ),
+                                Card(
+                                  child: TextButton(
+                                    onPressed: () {
+                                      Get.to(
+                                        () => FavoriteScreen(),
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.favorite,
+                                          color: red,
+                                        ),
+                                        const Text('Resto Favorite'),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           const SizedBox(height: 10),
                           ListRestaurantView(
-                            restaurantList: ctx.restaurantList,
+                            restaurantList: restaurantController.restaurantList,
                           ),
                         ],
                       )
-                    : Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          SizedBox(
-                              height: MediaQuery.of(context).size.height / 6,
-                              width: double.infinity),
-                          Container(
-                            width: double.infinity,
-                            height: MediaQuery.of(context).size.height * 0.4,
-                            alignment: Alignment.center,
-                            child: Lottie.asset(
-                              'assets/image/sandwich.json',
-                              width: MediaQuery.of(context).size.width * 0.8,
-                              height: MediaQuery.of(context).size.height * 0.8,
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                          Expanded(
-                            child: TypingAnimation(
-                              text: 'Loading....',
-                              textStyle: GoogleFonts.roboto(
-                                fontSize: 24.0,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                    : const LoadingScreen(),
               ),
             );
           },

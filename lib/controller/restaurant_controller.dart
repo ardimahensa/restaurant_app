@@ -1,17 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:makan_bang/controller/top_restaurant_helper.dart';
 
+import '../helper/connectivity_helper.dart';
+import '../helper/top_restaurant_helper.dart';
 import '../models/restaurant_list.dart';
 import '../service/api_services.dart';
 import '../shared/connection.dart';
-import 'connectivity_check.dart';
 
 class RestaurantController extends GetxController {
   List<RestaurantListItem> restaurantList = <RestaurantListItem>[];
   List<RestaurantListItem> top5RatingResto = <RestaurantListItem>[];
   bool isLoading = false;
   RxBool isConnectInternet = true.obs;
+  RxInt currentIndex = 0.obs;
 
   @override
   void onInit() {
