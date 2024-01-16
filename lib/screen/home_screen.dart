@@ -1,243 +1,111 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:typing_animation/typing_animation.dart';
 
-import '../service/restaurant.dart';
-import '../utils.dart';
-import '../widget/grid_view.dart';
-import '../widget/list_view.dart';
+import '../controller/restaurant_controller.dart';
+import 'list_restaurant.dart';
+import 'no_connection.dart';
+import 'search_screen.dart';
+import 'top_restaurant.dart';
 
-class HomeScreen extends StatefulWidget {
-  static const routeName = '/homeScreen';
-  const HomeScreen({super.key});
+class HomeScreen extends StatelessWidget {
+  HomeScreen({super.key});
 
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  late RestaurantList _restaurantList = RestaurantList(restaurants: []);
-  late ScrollController _scrollController;
-  bool _isScrolled = false;
-  bool _isGridViewCart = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController = ScrollController();
-    _scrollController.addListener(_handleScroll);
-    _localApiRestaurant();
-  }
-
-  Future<void> _localApiRestaurant() async {
-    try {
-      String jsonString =
-          await rootBundle.loadString('assets/json/local_restaurant.json');
-      final Map<String, dynamic> jsonData = jsonDecode(jsonString);
-
-      setState(() {
-        _restaurantList = RestaurantList.fromJson(jsonData);
-      });
-    } catch (error) {
-      Center(
-        child: Lottie.asset('assets/image/cheff.json', height: 200, width: 200),
-      );
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _handleScroll() {
-    setState(() {
-      _isScrolled = _scrollController.hasClients &&
-          _scrollController.offset > (100.0 - kToolbarHeight);
-    });
-  }
-
-  void _onSearchPressed() {
-    Navigator.pushNamed(context, '/searchScreen');
-  }
-
-  void _toggleView() {
-    setState(() {
-      _isGridViewCart = !_isGridViewCart;
-    });
-  }
+  final RestaurantController restaurantController =
+      Get.put(RestaurantController());
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        controller: _scrollController,
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 250,
-            floating: false,
-            pinned: true,
-            title: _isScrolled
-                ? null
-                : Center(
-                    child: SizedBox(
-                      height: kToolbarHeight,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Icon(Icons.food_bank, color: white),
-                          Text(
-                            "MAKAN BANG",
-                            style: titleText.copyWith(
-                              fontSize: 24,
-                              color: white,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 1,
-                            ),
-                          ),
-                          IconButton(
-                            icon: Icon(
-                                _isGridViewCart ? Icons.list : Icons.grid_on,
-                                color: white),
-                            onPressed: _toggleView,
-                          ),
-                        ],
-                      ),
-                    ),
+    return GetBuilder(
+      init: restaurantController,
+      initState: (_) {
+        restaurantController.getRestoList();
+        restaurantController.listenConnectivity();
+      },
+      builder: (ctx) {
+        return Obx(
+          () {
+            if (!ctx.isConnectInternet.value) {
+              return const NoConnection();
+            }
+            return RefreshIndicator(
+              onRefresh: () async {
+                restaurantController.getRestoList();
+              },
+              child: Scaffold(
+                appBar: AppBar(
+                  leading: Lottie.asset(
+                    'assets/image/header_food.json',
+                    width: 50,
+                    height: 50,
                   ),
-            backgroundColor: _isScrolled ? redDark : redLight,
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(0),
-              child: Container(
-                alignment: Alignment.center,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _isScrolled
-                        ? const SizedBox()
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Lottie.asset(
-                                'assets/image/sandwich.json',
-                                width: MediaQuery.of(context).size.width / 3,
-                                height: MediaQuery.of(context).size.height / 7,
-                              ),
-                              Lottie.asset(
-                                'assets/image/header_food.json',
-                                width: MediaQuery.of(context).size.width / 3,
-                                height: MediaQuery.of(context).size.height / 7,
-                              ),
-                            ],
-                          ),
-                    Container(
-                      margin: const EdgeInsets.all(5),
-                      height: MediaQuery.of(context).size.width / 9,
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      decoration: BoxDecoration(
-                        color: greyLight,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: InkWell(
-                        onTap: _onSearchPressed,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Icon(
-                              Icons.search,
-                              color: greyDark,
-                            ),
-                            const SizedBox(width: 8.0),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width / 2,
-                              child: Text(
-                                'Cari yang kamu mau',
-                                style: subTitleText.copyWith(
-                                  fontSize: 12,
-                                  color: black,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8.0),
-                            Icon(
-                              Icons.fastfood,
-                              color: redDark,
-                            ),
-                          ],
-                        ),
-                      ),
+                  title: Text(
+                    'Makan Bang',
+                    style: GoogleFonts.roboto(),
+                  ),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.search),
+                      onPressed: () {
+                        Get.to(() => SearchScreen());
+                      },
                     ),
                   ],
                 ),
+                body: !ctx.isLoading
+                    ? ListView(
+                        children: [
+                          Top5Resto(top5Restaurants: ctx.top5RatingResto),
+                          const SizedBox(height: 20),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: Text(
+                              'Restaurant List',
+                              style: GoogleFonts.roboto(fontSize: 24),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          ListRestaurantView(
+                            restaurantList: ctx.restaurantList,
+                          ),
+                        ],
+                      )
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          SizedBox(
+                              height: MediaQuery.of(context).size.height / 6,
+                              width: double.infinity),
+                          Container(
+                            width: double.infinity,
+                            height: MediaQuery.of(context).size.height * 0.4,
+                            alignment: Alignment.center,
+                            child: Lottie.asset(
+                              'assets/image/sandwich.json',
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              height: MediaQuery.of(context).size.height * 0.8,
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                          Expanded(
+                            child: TypingAnimation(
+                              text: 'Loading....',
+                              textStyle: GoogleFonts.roboto(
+                                fontSize: 24.0,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
               ),
-            ),
-          ),
-          _isGridViewCart
-              ? GridData(restaurants: _restaurantList.restaurants)
-              : ListData(restaurants: _restaurantList.restaurants),
-        ],
-      ),
-    );
-  }
-}
-
-class ListData extends StatelessWidget {
-  final List<Restaurant> restaurants;
-
-  const ListData({required this.restaurants, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (BuildContext context, int index) {
-          final restaurant = restaurants[index];
-          return GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(context, '/detailScreen',
-                  arguments: restaurant);
-            },
-            child: ListViewCart(restaurant: restaurant),
-          );
-        },
-        childCount: restaurants.length,
-      ),
-    );
-  }
-}
-
-class GridData extends StatelessWidget {
-  final List<Restaurant> restaurants;
-
-  const GridData({required this.restaurants, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 5.0,
-        mainAxisSpacing: 5.0,
-      ),
-      delegate: SliverChildBuilderDelegate(
-        (BuildContext context, int index) {
-          final restaurant = restaurants[index];
-          return GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(context, '/detailScreen',
-                  arguments: restaurant);
-            },
-            child: GridViewCart(restaurant: restaurant),
-          );
-        },
-        childCount: restaurants.length,
-      ),
+            );
+          },
+        );
+      },
     );
   }
 }
