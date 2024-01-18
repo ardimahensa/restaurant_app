@@ -189,19 +189,21 @@ class Top5Resto extends StatelessWidget {
               );
             },
           ),
-          AnimatedSmoothIndicator(
-            activeIndex: restaurantController.currentIndex.value,
-            count: top5Restaurants.length,
-            effect: ExpandingDotsEffect(
-              activeDotColor: purple,
-              dotColor: Colors.grey,
-              dotHeight: 15,
-              dotWidth: 15,
-              spacing: 10,
+          Obx(
+            () => AnimatedSmoothIndicator(
+              activeIndex: restaurantController.currentIndex.value,
+              count: top5Restaurants.length,
+              effect: ExpandingDotsEffect(
+                activeDotColor: purple,
+                dotColor: Colors.grey,
+                dotHeight: 15,
+                dotWidth: 15,
+                spacing: 10,
+              ),
+              onDotClicked: (index) {
+                carouselController.animateToPage(index);
+              },
             ),
-            onDotClicked: (index) {
-              carouselController.animateToPage(index);
-            },
           ),
         ],
       ),
