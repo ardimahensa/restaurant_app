@@ -12,7 +12,7 @@ import 'no_connection.dart';
 class FavoriteScreen extends StatelessWidget {
   final FavoriteController favoriteController = Get.find();
 
-  FavoriteScreen({Key? key}) : super(key: key);
+  FavoriteScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
