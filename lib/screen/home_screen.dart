@@ -3,7 +3,9 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 
+import '../controller/daily_reminder_controller.dart';
 import '../controller/restaurant_controller.dart';
+import '../helper/notification_helper.dart';
 import '../shared/utils.dart';
 import 'favorite.screen.dart';
 import 'list_restaurant.dart';
@@ -13,10 +15,11 @@ import 'search_screen.dart';
 import 'top_restaurant.dart';
 
 class HomeScreen extends StatelessWidget {
-  HomeScreen({super.key});
-
+  final NotificationHelper notificationHelper = Get.put(NotificationHelper());
+  final DailyController dailyController = Get.put(DailyController());
   final RestaurantController restaurantController =
       Get.put(RestaurantController());
+  HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +57,33 @@ class HomeScreen extends StatelessWidget {
                         Get.to(
                           () => SearchScreen(),
                         );
+                      },
+                    ),
+                    PopupMenuButton<bool>(
+                      offset: const Offset(0, 50),
+                      icon: const Icon(Icons.menu),
+                      itemBuilder: (BuildContext context) {
+                        return [
+                          PopupMenuItem<bool>(
+                            child: ListTile(
+                              title: Obx(
+                                () => Text(
+                                  dailyController.isScheduled
+                                      ? 'Notifikasi Aktif'
+                                      : 'Notifikasi Tidak Aktif',
+                                ),
+                              ),
+                              trailing: Obx(
+                                () => Switch(
+                                  value: dailyController.isScheduled,
+                                  onChanged: (value) {
+                                    dailyController.toggleDailyNotification();
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        ];
                       },
                     ),
                   ],

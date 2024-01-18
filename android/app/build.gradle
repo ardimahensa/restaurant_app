@@ -24,7 +24,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.example.makan_bang"
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdkVersion 33
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -64,4 +64,15 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+}
+
+configurations.all {
+    resolutionStrategy {
+        eachDependency {
+            if ((requested.group == "org.jetbrains.kotlin") && (requested.name.startsWith("kotlin-stdlib"))) {
+                useVersion("1.8.0")
+            }
+        }
+    }
+}

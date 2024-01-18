@@ -17,7 +17,6 @@ class RestaurantController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Mengecek koneksi internet saat aplikasi pertama kali dibuka
     _checkConnection();
   }
 

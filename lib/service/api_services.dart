@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:makan_bang/models/restaurant_list.dart';
 
@@ -8,7 +9,7 @@ class ApiService {
   final String baseUrl = 'https://restaurant-api.dicoding.dev';
   final String imageUrl = 'https://restaurant-api.dicoding.dev/images/medium';
 
-//list restaurant
+  ///list restaurant
   Future<RestaurantList> getRestaurantList() async {
     final response = await http.get(Uri.parse('$baseUrl/list'));
     if (response.statusCode == 200) {
@@ -18,7 +19,7 @@ class ApiService {
     }
   }
 
-//detail restaurant
+  ///detail restaurant
   Future<RestaurantDetail> getRestaurantDetail(String restaurantId) async {
     final response = await http.get(Uri.parse('$baseUrl/detail/$restaurantId'));
     if (response.statusCode == 200) {
@@ -28,6 +29,7 @@ class ApiService {
     }
   }
 
+  ///serach restaurant
   Future<List<RestaurantListItem>> searchRestaurant(String keyword) async {
     final response = await http.get(Uri.parse('$baseUrl/search?q=$keyword'));
     if (response.statusCode == 200) {
@@ -38,6 +40,15 @@ class ApiService {
     }
   }
 
+  ///random restaurant
+  Future<RestaurantListItem> getRandomRestaurant() async {
+    final RestaurantList restaurantList = await getRestaurantList();
+    final Random random = Random();
+    final int randomIndex = random.nextInt(restaurantList.restaurants.length);
+    return restaurantList.restaurants[randomIndex];
+  }
+
+  ///tambah review
   Future<Map<String, dynamic>> addReview(
       String id, String name, String review) async {
     final Map<String, dynamic> requestData = {

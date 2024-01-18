@@ -21,6 +21,12 @@ class RestaurantList {
           .toList(),
     );
   }
+  Map<String, dynamic> toJson() => {
+        "error": error,
+        "message": message,
+        "count": count,
+        "restaurants": List<dynamic>.from(restaurants.map((x) => x.toJson())),
+      };
 }
 
 class RestaurantListItem {
@@ -56,4 +62,12 @@ class RestaurantListItem {
       rating: json['rating'].toDouble(),
     );
   }
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "name": name,
+        "description": description,
+        "pictureId": pictureId,
+        "city": city,
+        "rating": rating,
+      };
 }

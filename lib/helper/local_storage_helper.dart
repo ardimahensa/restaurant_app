@@ -11,13 +11,13 @@ class LocalStorageService {
     return prefs.getStringList('favorites') ?? [];
   }
 
-  static Future<bool?> getDailyReminderStatus() async {
+  static Future<void> saveDailyReminderStatus(bool isScheduled) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('dailyReminderStatus');
+    prefs.setBool('isScheduled', isScheduled);
   }
 
-  static Future<void> saveDailyReminderStatus(bool value) async {
+  static Future<bool> getDailyReminderStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('dailyReminderStatus', value);
+    return prefs.getBool('isScheduled') ?? false;
   }
 }

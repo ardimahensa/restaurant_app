@@ -20,7 +20,6 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _initializeApp() async {
-    // Tunggu beberapa detik sebelum navigasi ke HomeScreen
     await Future.delayed(const Duration(seconds: 5));
     if (mounted) {
       Get.offAll(HomeScreen());

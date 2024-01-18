@@ -16,6 +16,11 @@ class RestaurantDetail {
       restaurant: RestaurantDetailItem.fromJson(json['restaurant']),
     );
   }
+  Map<String, dynamic> toJson() => {
+        "error": error,
+        "message": message,
+        "restaurant": restaurant.toJson(),
+      };
 }
 
 class RestaurantDetailItem {
@@ -61,6 +66,19 @@ class RestaurantDetailItem {
           .toList(),
     );
   }
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "name": name,
+        "description": description,
+        "city": city,
+        "address": address,
+        "pictureId": pictureId,
+        "categories": List<dynamic>.from(categories.map((x) => x.toJson())),
+        "menus": menus.toJson(),
+        "rating": rating,
+        "customerReviews":
+            List<dynamic>.from(customerReviews.map((x) => x.toJson())),
+      };
 }
 
 class Category {
@@ -71,6 +89,9 @@ class Category {
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(name: json['name']);
   }
+  Map<String, dynamic> toJson() => {
+        "name": name,
+      };
 }
 
 class Menus {
@@ -89,6 +110,10 @@ class Menus {
           .toList(),
     );
   }
+  Map<String, dynamic> toJson() => {
+        "foods": List<dynamic>.from(foods.map((x) => x.toJson())),
+        "drinks": List<dynamic>.from(drinks.map((x) => x.toJson())),
+      };
 }
 
 class MenuItem {
@@ -99,6 +124,9 @@ class MenuItem {
   factory MenuItem.fromJson(Map<String, dynamic> json) {
     return MenuItem(name: json['name']);
   }
+  Map<String, dynamic> toJson() => {
+        "name": name,
+      };
 }
 
 class CustomerReview {
@@ -116,4 +144,9 @@ class CustomerReview {
       date: json['date'],
     );
   }
+  Map<String, dynamic> toJson() => {
+        "name": name,
+        "review": review,
+        "date": date,
+      };
 }
