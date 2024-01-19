@@ -5,6 +5,7 @@ import '../helper/local_storage_helper.dart';
 import '../models/restaurant_detail.dart';
 import '../service/api_services.dart';
 import '../shared/connection.dart';
+import 'package:http/http.dart' as http;
 
 class FavoriteController extends GetxController {
   final Map<String, RestaurantDetail> restaurantDetails = {};
@@ -37,8 +38,10 @@ class FavoriteController extends GetxController {
   Future<void> getRestaurantDetail(String restaurantId) async {
     switchLoading(true);
     try {
+      final client = http.Client();
+
       RestaurantDetail? detail =
-          await ApiService().getRestaurantDetail(restaurantId);
+          await ApiService().getRestaurantDetail(restaurantId, client);
 
       restaurantDetails[restaurantId] = detail;
 

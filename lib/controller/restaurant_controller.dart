@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 import '../helper/connectivity_helper.dart';
 import '../helper/top_restaurant_helper.dart';
@@ -34,11 +35,13 @@ class RestaurantController extends GetxController {
     switchLoading(true);
     try {
       restaurantList.clear();
-      var futureRestaurantList = await ApiService().getRestaurantList();
+      final client = http.Client();
+
+      var futureRestaurantList = await ApiService().getRestaurantList(client);
       restaurantList = futureRestaurantList.restaurants;
       for (var i = 0; i < restaurantList.length; i++) {
-        var detailResto =
-            await ApiService().getRestaurantDetail(restaurantList[i].id);
+        var detailResto = await ApiService()
+            .getRestaurantDetail(restaurantList[i].id, client);
         restaurantList[i].drinks = detailResto.restaurant.menus.drinks.length;
         restaurantList[i].foods = detailResto.restaurant.menus.foods.length;
         restaurantList[i].reviews =

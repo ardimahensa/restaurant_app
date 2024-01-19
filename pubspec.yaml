@@ -30,9 +30,11 @@ environment:
 dependencies:
   android_alarm_manager_plus: ^3.0.4
   animate_do: ^3.1.2
+  build_runner: ^2.4.8
   carousel_slider: ^4.2.1
   connectivity_plus: ^5.0.2
   cupertino_icons: ^1.0.2
+  equatable: ^2.0.5
   flutter:
     sdk: flutter
   flutter_launcher_icons: ^0.13.1
@@ -42,6 +44,7 @@ dependencies:
   http: ^1.1.2
   intl: ^0.19.0
   lottie: ^3.0.0
+  mockito: ^5.4.4
   rxdart: ^0.27.7
   shared_preferences: ^2.2.2
   smooth_page_indicator: ^1.1.0

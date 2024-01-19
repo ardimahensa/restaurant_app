@@ -10,8 +10,8 @@ class ApiService {
   final String imageUrl = 'https://restaurant-api.dicoding.dev/images/medium';
 
   ///list restaurant
-  Future<RestaurantList> getRestaurantList() async {
-    final response = await http.get(Uri.parse('$baseUrl/list'));
+  Future<RestaurantList> getRestaurantList(http.Client client) async {
+    final response = await client.get(Uri.parse('$baseUrl/list'));
     if (response.statusCode == 200) {
       return RestaurantList.fromJson(json.decode(response.body));
     } else {
@@ -20,8 +20,10 @@ class ApiService {
   }
 
   ///detail restaurant
-  Future<RestaurantDetail> getRestaurantDetail(String restaurantId) async {
-    final response = await http.get(Uri.parse('$baseUrl/detail/$restaurantId'));
+  Future<RestaurantDetail> getRestaurantDetail(
+      String restaurantId, http.Client client) async {
+    final response =
+        await client.get(Uri.parse('$baseUrl/detail/$restaurantId'));
     if (response.statusCode == 200) {
       return RestaurantDetail.fromJson(json.decode(response.body));
     } else {
@@ -41,8 +43,8 @@ class ApiService {
   }
 
   ///random restaurant
-  Future<RestaurantListItem> getRandomRestaurant() async {
-    final RestaurantList restaurantList = await getRestaurantList();
+  Future<RestaurantListItem> getRandomRestaurant(http.Client client) async {
+    final RestaurantList restaurantList = await getRestaurantList(client);
     final Random random = Random();
     final int randomIndex = random.nextInt(restaurantList.restaurants.length);
     return restaurantList.restaurants[randomIndex];

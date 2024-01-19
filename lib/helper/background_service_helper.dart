@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'dart:isolate';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import '../service/api_services.dart';
 import 'notification_helper.dart';
@@ -29,8 +30,10 @@ class BackgroundService {
   static Future<void> callback() async {
     debugPrint('Alarm fired!');
     final NotificationHelper notificationHelper = NotificationHelper();
+    final client = http.Client();
+
     try {
-      var randomRestaurant = await ApiService().getRandomRestaurant();
+      var randomRestaurant = await ApiService().getRandomRestaurant(client);
       debugPrint('Random Restaurant Data: $randomRestaurant');
 
       await notificationHelper.showNotification(
