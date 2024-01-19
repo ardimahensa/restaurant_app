@@ -53,140 +53,11 @@ class DetailScreen extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Stack(
-                                  children: [
-                                    Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      height: 200.0,
-                                      decoration: BoxDecoration(
-                                        color: grey,
-                                        borderRadius: BorderRadius.circular(10),
-                                        image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: NetworkImage(
-                                            '${ApiService().imageUrl}/${ctx.restaurantDetail!.restaurant.pictureId}',
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.topRight,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: grey,
-                                        ),
-                                        child: IconButton(
-                                          onPressed: () async {
-                                            await favoriteController
-                                                .toggleFavorite(ctx
-                                                    .restaurantDetail!
-                                                    .restaurant
-                                                    .id);
-                                            favoriteController
-                                                .showFavoriteSnackbar(
-                                              () => context,
-                                              favoriteController.isFavorite(ctx
-                                                  .restaurantDetail!
-                                                  .restaurant
-                                                  .id),
-                                            );
-                                          },
-                                          icon: Obx(
-                                            () => Icon(
-                                              favoriteController
-                                                      .isFavorite(restaurantId)
-                                                  ? Icons.favorite
-                                                  : Icons.favorite_border,
-                                              color: Colors.red,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                imageResto(context, ctx),
                                 const SizedBox(height: 16.0),
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  padding: const EdgeInsets.all(8.0),
-                                  decoration: BoxDecoration(
-                                      color: grey,
-                                      borderRadius: BorderRadius.circular(10)),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        ctx.restaurantDetail?.restaurant.name ??
-                                            '',
-                                        style: GoogleFonts.roboto(
-                                          fontSize: 24.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8.0),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.location_city,
-                                            color: green,
-                                          ),
-                                          const SizedBox(width: 5.0),
-                                          Text(
-                                            ctx.restaurantDetail?.restaurant
-                                                    .city ??
-                                                '',
-                                            style: GoogleFonts.roboto(
-                                                fontSize: 16.0),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 8.0),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.star,
-                                            color: yellow,
-                                          ),
-                                          const SizedBox(width: 5.0),
-                                          Text(
-                                            "${ctx.restaurantDetail?.restaurant.rating ?? ''}",
-                                            style: GoogleFonts.roboto(
-                                                fontSize: 16.0),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                infoResto(context, ctx),
                                 const SizedBox(height: 16.0),
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  padding: const EdgeInsets.all(8.0),
-                                  decoration: BoxDecoration(
-                                      color: grey,
-                                      borderRadius: BorderRadius.circular(10)),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        "Tentang Restorant Ini:",
-                                        style: GoogleFonts.roboto(
-                                            fontSize: 18.0,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      const SizedBox(height: 8.0),
-                                      Text(
-                                        ctx.restaurantDetail?.restaurant
-                                                .description ??
-                                            '',
-                                        style:
-                                            GoogleFonts.roboto(fontSize: 16.0),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                aboutResto(context, ctx),
                                 const Divider(thickness: 1),
                                 Text(
                                   "Kategori:",
@@ -194,24 +65,7 @@ class DetailScreen extends StatelessWidget {
                                       fontSize: 18.0,
                                       fontWeight: FontWeight.bold),
                                 ),
-                                Wrap(
-                                  direction: Axis.horizontal,
-                                  spacing: 8.0,
-                                  runSpacing: 8.0,
-                                  children: [
-                                    for (var category in ctx.restaurantDetail!
-                                        .restaurant.categories)
-                                      Container(
-                                        padding: const EdgeInsets.all(8.0),
-                                        decoration: BoxDecoration(
-                                          color: grey,
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                        ),
-                                        child: Text(category.name),
-                                      ),
-                                  ],
-                                ),
+                                kategoriResto(ctx),
                                 const Divider(thickness: 1),
                                 Text(
                                   "Menu Makanan:",
@@ -219,27 +73,7 @@ class DetailScreen extends StatelessWidget {
                                       fontSize: 18.0,
                                       fontWeight: FontWeight.bold),
                                 ),
-                                Wrap(
-                                  direction: Axis.horizontal,
-                                  spacing: 8.0,
-                                  runSpacing: 8.0,
-                                  children: [
-                                    for (var food in ctx.restaurantDetail!
-                                        .restaurant.menus.foods)
-                                      Container(
-                                        padding: const EdgeInsets.all(8.0),
-                                        decoration: BoxDecoration(
-                                          color: red,
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                        ),
-                                        child: Text(
-                                          food.name,
-                                          style: TextStyle(color: white),
-                                        ),
-                                      ),
-                                  ],
-                                ),
+                                menuMakanan(ctx),
                                 const SizedBox(height: 16.0),
                                 Text(
                                   "Menu Minuman:",
@@ -247,24 +81,7 @@ class DetailScreen extends StatelessWidget {
                                       fontSize: 18.0,
                                       fontWeight: FontWeight.bold),
                                 ),
-                                Wrap(
-                                  direction: Axis.horizontal,
-                                  spacing: 8.0,
-                                  runSpacing: 8.0,
-                                  children: [
-                                    for (var drink in ctx.restaurantDetail!
-                                        .restaurant.menus.drinks)
-                                      Container(
-                                        padding: const EdgeInsets.all(8.0),
-                                        decoration: BoxDecoration(
-                                          color: yellow,
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                        ),
-                                        child: Text(drink.name),
-                                      ),
-                                  ],
-                                ),
+                                menuMinuman(ctx),
                                 const Divider(thickness: 1),
                                 Text(
                                   "Review Resto:",
@@ -272,24 +89,7 @@ class DetailScreen extends StatelessWidget {
                                       fontSize: 18.0,
                                       fontWeight: FontWeight.bold),
                                 ),
-                                Column(
-                                  children: [
-                                    for (var review in ctx.restaurantDetail!
-                                        .restaurant.customerReviews)
-                                      ListTile(
-                                        tileColor: grey,
-                                        title: Text(review.name),
-                                        subtitle: Text(
-                                          review.review,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        trailing: Text(
-                                          review.date,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                  ],
-                                ),
+                                reviewResto(ctx),
                                 const SizedBox(height: 50),
                               ],
                             ),
@@ -314,66 +114,264 @@ class DetailScreen extends StatelessWidget {
     );
   }
 
+  Column reviewResto(DetailController ctx) {
+    return Column(
+      children: [
+        for (var review in ctx.restaurantDetail!.restaurant.customerReviews)
+          ListTile(
+            tileColor: grey,
+            title: Text(review.name),
+            subtitle: Text(
+              review.review,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: Text(
+              review.date,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+      ],
+    );
+  }
+
+  Wrap menuMinuman(DetailController ctx) {
+    return Wrap(
+      direction: Axis.horizontal,
+      spacing: 8.0,
+      runSpacing: 8.0,
+      children: [
+        for (var drink in ctx.restaurantDetail!.restaurant.menus.drinks)
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: yellow,
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Text(drink.name),
+          ),
+      ],
+    );
+  }
+
+  Wrap menuMakanan(DetailController ctx) {
+    return Wrap(
+      direction: Axis.horizontal,
+      spacing: 8.0,
+      runSpacing: 8.0,
+      children: [
+        for (var food in ctx.restaurantDetail!.restaurant.menus.foods)
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: red,
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Text(
+              food.name,
+              style: TextStyle(color: white),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Wrap kategoriResto(DetailController ctx) {
+    return Wrap(
+      direction: Axis.horizontal,
+      spacing: 8.0,
+      runSpacing: 8.0,
+      children: [
+        for (var category in ctx.restaurantDetail!.restaurant.categories)
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: grey,
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Text(category.name),
+          ),
+      ],
+    );
+  }
+
+  Container aboutResto(BuildContext context, DetailController ctx) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      padding: const EdgeInsets.all(8.0),
+      decoration:
+          BoxDecoration(color: grey, borderRadius: BorderRadius.circular(10)),
+      child: Column(
+        children: [
+          Text(
+            "Tentang Restorant Ini:",
+            style:
+                GoogleFonts.roboto(fontSize: 18.0, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8.0),
+          Text(
+            ctx.restaurantDetail?.restaurant.description ?? '',
+            style: GoogleFonts.roboto(fontSize: 16.0),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container infoResto(BuildContext context, DetailController ctx) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      padding: const EdgeInsets.all(8.0),
+      decoration:
+          BoxDecoration(color: grey, borderRadius: BorderRadius.circular(10)),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            ctx.restaurantDetail?.restaurant.name ?? '',
+            style: GoogleFonts.roboto(
+              fontSize: 24.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8.0),
+          Row(
+            children: [
+              Icon(
+                Icons.location_city,
+                color: green,
+              ),
+              const SizedBox(width: 5.0),
+              Text(
+                ctx.restaurantDetail?.restaurant.city ?? '',
+                style: GoogleFonts.roboto(fontSize: 16.0),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8.0),
+          Row(
+            children: [
+              Icon(
+                Icons.star,
+                color: yellow,
+              ),
+              const SizedBox(width: 5.0),
+              Text(
+                "${ctx.restaurantDetail?.restaurant.rating ?? ''}",
+                style: GoogleFonts.roboto(fontSize: 16.0),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Stack imageResto(BuildContext context, DetailController ctx) {
+    return Stack(
+      children: [
+        Container(
+          width: MediaQuery.of(context).size.width,
+          height: 200.0,
+          decoration: BoxDecoration(
+            color: grey,
+            borderRadius: BorderRadius.circular(10),
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: NetworkImage(
+                '${ApiService().imageUrl}/${ctx.restaurantDetail!.restaurant.pictureId}',
+              ),
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.topRight,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: grey,
+            ),
+            child: IconButton(
+              onPressed: () async {
+                await favoriteController
+                    .toggleFavorite(ctx.restaurantDetail!.restaurant.id);
+                favoriteController.showFavoriteSnackbar(
+                  () => context,
+                  favoriteController
+                      .isFavorite(ctx.restaurantDetail!.restaurant.id),
+                );
+              },
+              icon: Obx(
+                () => Icon(
+                  favoriteController.isFavorite(restaurantId)
+                      ? Icons.favorite
+                      : Icons.favorite_border,
+                  color: Colors.red,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   void _showReviewDialog(BuildContext context) {
+    final nameController = TextEditingController();
+    final reviewController = TextEditingController();
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        final nameController = TextEditingController();
-        final reviewController = TextEditingController();
         return AlertDialog(
           title: const Text("Tambahkan Review"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nama Pengguna',
-                  hintText: 'Masukkan nama pengguna',
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nama Pengguna',
+                    hintText: 'Masukkan nama pengguna',
+                  ),
                 ),
-              ),
-              TextField(
-                controller: reviewController,
-                decoration: const InputDecoration(
-                  labelText: 'Ulasan',
-                  hintText: 'Masukkan ulasan Anda',
+                TextField(
+                  controller: reviewController,
+                  decoration: const InputDecoration(
+                    labelText: 'Ulasan',
+                    hintText: 'Masukkan ulasan Anda',
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () {
-                  if (nameController.text.isNotEmpty &&
-                      reviewController.text.isNotEmpty) {
-                    detailController
-                        .addReview(
-                      restaurantId,
-                      nameController.text,
-                      reviewController.text,
-                    )
-                        .then((value) {
-                      if (value) {
-                        Navigator.pop(context);
-                        nameController.clear();
-                        reviewController.clear();
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Gagal menambahkan review'),
-                          ),
-                        );
-                      }
-                    });
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Nama dan komentar tidak boleh kosong'),
-                      ),
-                    );
-                  }
-                },
-                child: const Text('Tambahkan Ulasan'),
-              ),
-            ],
+                const SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: () {
+                    final detailController = Get.find<DetailController>();
+                    if (nameController.text.isNotEmpty &&
+                        reviewController.text.isNotEmpty) {
+                      detailController
+                          .addReview(
+                        restaurantId,
+                        nameController.text,
+                        reviewController.text,
+                      )
+                          .then((value) {
+                        if (value) {
+                          Navigator.pop(context);
+                          nameController.clear();
+                          reviewController.clear();
+                          detailController.showSuccessSnackbar();
+                        }
+                      });
+                    } else {
+                      detailController.showFieldEmptyErrorSnackbar();
+                    }
+                  },
+                  child: const Text('Tambahkan Ulasan'),
+                ),
+              ],
+            ),
           ),
         );
       },

@@ -67,7 +67,7 @@ class ListRestaurantView extends StatelessWidget {
                           color: grey,
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 8, right: 8),
+                          padding: const EdgeInsets.only(left: 8),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -77,9 +77,11 @@ class ListRestaurantView extends StatelessWidget {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    restaurants.name,
-                                    overflow: TextOverflow.ellipsis,
+                                  Expanded(
+                                    child: Text(
+                                      restaurants.name,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                   IconButton(
                                     onPressed: () async {

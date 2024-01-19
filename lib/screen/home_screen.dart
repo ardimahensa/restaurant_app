@@ -99,6 +99,7 @@ class HomeScreen extends StatelessWidget {
                             padding: const EdgeInsets.only(left: 8),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
                                   'Restaurant List',
