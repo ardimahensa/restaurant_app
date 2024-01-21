@@ -9,8 +9,8 @@ import '../helper/notification_helper.dart';
 import '../shared/utils.dart';
 import 'favorite.screen.dart';
 import 'list_restaurant.dart';
-import 'loading_screen.dart';
-import 'no_connection.dart';
+import '../widget/loading.dart';
+import '../widget/no_connection.dart';
 import 'search_screen.dart';
 import 'top_restaurant.dart';
 
@@ -132,7 +132,7 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ],
                       )
-                    : const LoadingScreen(),
+                    : const Loading(),
               ),
             );
           },

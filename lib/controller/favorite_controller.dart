@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
-import '../helper/local_storage_helper.dart';
+import '../helper/favorite_database.dart';
 import '../models/restaurant_detail.dart';
 import '../service/api_services.dart';
 import '../shared/connection.dart';
-import 'package:http/http.dart' as http;
 
 class FavoriteController extends GetxController {
   final Map<String, RestaurantDetail> restaurantDetails = {};
@@ -39,12 +39,9 @@ class FavoriteController extends GetxController {
     switchLoading(true);
     try {
       final client = http.Client();
-
       RestaurantDetail? detail =
           await ApiService().getRestaurantDetail(restaurantId, client);
-
       restaurantDetails[restaurantId] = detail;
-
       update();
     } catch (e) {
       debugPrint('Error: $e');
@@ -54,7 +51,13 @@ class FavoriteController extends GetxController {
   }
 
   Future<void> initFavorites() async {
-    favoriteIds.assignAll(await LocalStorageService.getFavorites());
+    try {
+      final favorites = await FavoriteDatabaseHelper.getFavorites();
+      favoriteIds.assignAll(favorites);
+      update();
+    } catch (e) {
+      debugPrint('Error initializing favorites: $e');
+    }
   }
 
   Future<void> getFavoriteRestaurants() async {
@@ -66,17 +69,20 @@ class FavoriteController extends GetxController {
   }
 
   Future<void> toggleFavorite(String restaurantId) async {
-    List<String> favoritesCopy = List.from(favoriteIds);
+    try {
+      final isCurrentlyFavorite = isFavorite(restaurantId);
 
-    if (favoritesCopy.contains(restaurantId)) {
-      favoritesCopy.remove(restaurantId);
-    } else {
-      favoritesCopy.add(restaurantId);
+      if (isCurrentlyFavorite) {
+        await FavoriteDatabaseHelper.deleteFavorite(restaurantId);
+      } else {
+        await FavoriteDatabaseHelper.insertFavorite(restaurantId);
+      }
+
+      await initFavorites();
+      update();
+    } catch (e) {
+      debugPrint('Error toggling favorite: $e');
     }
-
-    await LocalStorageService.saveFavorites(favoritesCopy);
-    favoriteIds.assignAll(favoritesCopy);
-    update();
   }
 
   bool isFavorite(String restaurantId) {

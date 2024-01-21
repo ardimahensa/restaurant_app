@@ -6,8 +6,8 @@ import '../service/api_services.dart';
 import '../shared/utils.dart';
 import '../widget/icon_text.dart';
 import 'detail_screen.dart';
-import 'loading_screen.dart';
-import 'no_connection.dart';
+import '../widget/loading.dart';
+import '../widget/no_connection.dart';
 
 class FavoriteScreen extends StatelessWidget {
   final FavoriteController favoriteController = Get.find();
@@ -24,7 +24,7 @@ class FavoriteScreen extends StatelessWidget {
             if (!favoriteController.isConnectInternet.value) {
               return const NoConnection();
             } else if (favoriteController.isLoading.value) {
-              return const LoadingScreen();
+              return const Loading();
             }
             return Scaffold(
               appBar: AppBar(

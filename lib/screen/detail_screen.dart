@@ -5,8 +5,8 @@ import '../controller/detail_controller.dart';
 import '../controller/favorite_controller.dart';
 import '../service/api_services.dart';
 import '../shared/utils.dart';
-import 'loading_screen.dart';
-import 'no_connection.dart';
+import '../widget/loading.dart';
+import '../widget/no_connection.dart';
 
 class DetailScreen extends StatelessWidget {
   DetailScreen({super.key, required this.restaurantId});
@@ -33,7 +33,7 @@ class DetailScreen extends StatelessWidget {
             () => !ctx.isConnectInternet.value
                 ? const NoConnection()
                 : ctx.restaurantDetail == null
-                    ? const LoadingScreen()
+                    ? const Loading()
                     : RefreshIndicator(
                         onRefresh: () async {
                           detailController.getDetailRestaurant(restaurantId);

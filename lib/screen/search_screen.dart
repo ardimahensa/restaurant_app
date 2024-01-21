@@ -9,8 +9,8 @@ import '../service/api_services.dart';
 import '../shared/utils.dart';
 import '../widget/icon_text.dart';
 import 'detail_screen.dart';
-import 'loading_screen.dart';
-import 'no_connection.dart';
+import '../widget/loading.dart';
+import '../widget/no_connection.dart';
 
 class SearchScreen extends StatelessWidget {
   SearchScreen({super.key});
@@ -183,7 +183,7 @@ class SearchScreen extends StatelessWidget {
                 )
               : const NotFound()
           : searchController.isLoading.value
-              ? const LoadingScreen()
+              ? const Loading()
               : ListView.builder(
                   itemCount: searchController.searchListRestaurant.length,
                   itemBuilder: (context, index) {

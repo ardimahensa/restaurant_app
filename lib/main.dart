@@ -5,7 +5,7 @@ import 'package:makan_bang/helper/notification_helper.dart';
 import 'package:makan_bang/shared/utils.dart';
 
 import 'controller/restaurant_controller.dart';
-import 'screen/no_connection.dart';
+import 'widget/no_connection.dart';
 import 'screen/splash_screen.dart';
 
 void main() async {

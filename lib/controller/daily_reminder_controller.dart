@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:makan_bang/helper/date_time_helper.dart';
 
 import '../helper/background_service_helper.dart';
 import '../helper/local_storage_helper.dart';
@@ -19,14 +20,15 @@ class DailyController extends GetxController {
   }
 
   Future<void> loadScheduledStatus() async {
-    final bool savedStatus = await LocalStorageService.getDailyReminderStatus();
+    final bool savedStatus =
+        await SharedPreferencesHelper.getDailyReminderStatus();
     _isScheduled.value = savedStatus;
     update();
   }
 
   Future<void> saveScheduledStatus(bool value) async {
     _isScheduled.value = value;
-    await LocalStorageService.saveDailyReminderStatus(value);
+    await SharedPreferencesHelper.saveDailyReminderStatus(value);
   }
 
   Future<void> configureBackgroundService() async {
@@ -49,8 +51,7 @@ class DailyController extends GetxController {
           const Duration(hours: 24),
           1,
           BackgroundService.callback,
-          startAt: DateTime(DateTime.now().year, DateTime.now().month,
-              DateTime.now().day, 11, 0, 0),
+          startAt: DateTimeHelper.format(),
           exact: true,
           wakeup: true,
         );
